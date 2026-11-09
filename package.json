@@ -1,0 +1,17 @@
+{
+  "name": "the-valley-restored",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scroll-driven biology presentation on conservation and environmental restoration",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/anybody": "^5.3.0",
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "esbuild": "^0.28.2",
+    "three": "^0.187.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}

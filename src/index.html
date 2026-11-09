@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conservation and Environmental Restoration</title>
+<meta name="description" content="A scroll-driven biology presentation. Restore a 3D valley with practical conservation methods, then test what you learned.">
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<a class="skip" href="#simulator">Skip to the interactive activities</a>
+
+<div class="sky" aria-hidden="true"></div>
+<div class="sky sky-before" aria-hidden="true"></div>
+<div id="space" aria-hidden="true"></div>
+<canvas id="valley" aria-label="3D model of the Earth, then of a valley that recovers as you scroll"></canvas>
+<div id="pins" aria-hidden="false"></div>
+
+<header id="hud" aria-label="Valley health">
+  <div class="hud-year"><span class="hud-year-label">Year</span> <b id="year">0</b></div>
+  <ul class="hud-bars">
+    <li><span>Air</span><i><u data-bar="air"></u></i></li>
+    <li><span>Water</span><i><u data-bar="water"></u></i></li>
+    <li><span>Soil</span><i><u data-bar="soil"></u></i></li>
+    <li><span>Forest</span><i><u data-bar="forest"></u></i></li>
+    <li><span>Species</span><i><u data-bar="species"></u></i></li>
+  </ul>
+</header>
+
+<nav id="deck" aria-label="Presentation controls">
+  <button type="button" id="deckBack">Back</button>
+  <button type="button" id="deckNext" class="deck-next">Next</button>
+  <div class="deck-info">
+    <span id="deckTitle"></span>
+    <i class="deck-hold" aria-hidden="true"><u id="deckFill"></u></i>
+  </div>
+  <button type="button" id="toolAuto" aria-pressed="false">Auto-play</button>
+  <button type="button" id="deckSpeed" class="deck-extra" title="Change how fast the mouse wheel scrolls">Scroll: Normal</button>
+  <button type="button" id="toolSound" class="deck-extra" aria-pressed="false">Sound off</button>
+  <button type="button" id="toolNotes" class="deck-extra" aria-pressed="false">Notes</button>
+</nav>
+<div id="irisRing" aria-hidden="true"></div>
+
+<aside id="notesPanel" hidden aria-label="Speaker notes">
+  <div class="notes-head"><h2 id="notesTitle"></h2><button type="button" id="notesPop">Open in new window</button><button type="button" id="notesClose" aria-label="Close notes">Close</button></div>
+  <p id="notesBody"></p>
+  <p id="notesNext"></p>
+</aside>
+
+<aside id="helpPanel" hidden aria-label="Keyboard shortcuts">
+  <h2>Presenter keys</h2>
+  <dl>
+    <div><dt>Right, Space</dt><dd>Next slide</dd></div>
+    <div><dt>Left</dt><dd>Previous slide</dd></div>
+    <div><dt>Up, down</dt><dd>Move a little</dd></div>
+    <div><dt>P</dt><dd>Auto-play or pause</dd></div>
+    <div><dt>+, &minus;</dt><dd>Auto-play speed</dd></div>
+    <div><dt>S</dt><dd>Mouse wheel speed</dd></div>
+    <div><dt>N</dt><dd>Speaker notes</dd></div>
+    <div><dt>M</dt><dd>Sound</dd></div>
+    <div><dt>F</dt><dd>Full screen</dd></div>
+    <div><dt>H</dt><dd>Show or hide this list</dd></div>
+  </dl>
+  <button class="btn" type="button" id="helpClose">Close</button>
+</aside>
+
+<nav id="rail" aria-label="Chapters"></nav>
+
+<main>
+  <!-- EARTH -->
+  <section class="earth" id="earth" data-title="Earth">
+    <div class="earth-sticky">
+      <div class="earth-head">
+        <h1 class="earth-title" id="earthTitle" aria-label="Conservation and Environmental Restoration">
+          <span class="kline">Conservation</span>
+          <span class="kline">and Environmental</span>
+          <span class="kline">Restoration</span>
+        </h1>
+        <p class="earth-sub">Practical methods for conserving and restoring the environment. <span id="earthNames"></span></p>
+      </div>
+      <p class="earth-line" data-a=".2" data-b=".31">Every environmental problem happens somewhere.</p>
+      <p class="earth-line" data-a=".325" data-b=".5">So let's zoom in on one place.</p>
+      <p class="scroll-cue earth-cue"><span class="cue-dot"></span>Press Next to begin</p>
+    </div>
+  </section>
+
+  <!-- HERO -->
+  <section class="beat hero" id="hero" data-title="Start">
+    <div class="hero-sticky">
+      <h2 class="kinetic" id="heroTitle" aria-label="Bring the valley back">
+        <span class="kline">Bring</span>
+        <span class="kline">the valley</span>
+        <span class="kline">back</span>
+      </h2>
+      <div class="hero-foot">
+        <p>This valley is a model, and it is in trouble. Each method we describe restores part of it.</p>
+        <p class="scroll-cue"><span class="cue-dot"></span>Press Next to start year 0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAMAGE -->
+  <section class="beat" id="damage" data-title="The damage">
+    <article class="note right">
+      <h2>Year 0: find what went wrong</h2>
+      <p class="scrub">Five problems are hurting this valley. Each one started as a normal way to earn a living.</p>
+      <p>Tap the five markers on the model to see what each problem does.</p>
+      <p class="found" id="foundCount" role="status">0 of 5 found</p>
+    </article>
+    <article class="note right" id="stormNote">
+      <h2>The three questions we answer</h2>
+      <ol class="ladder">
+        <li><b>What strategies conserve and restore natural resources?</b></li>
+        <li><b>What strategies reduce pollution?</b></li>
+        <li><b>What is the effect of changing our practices?</b> We look at natural materials in agriculture, organic agriculture, conservation methods, education and monitoring.</li>
+      </ol>
+    </article>
+  </section>
+
+  <!-- QUESTION 1 -->
+  <section class="part" data-strand="res" id="part1" data-title="Question 1">
+    <div class="part-sticky"><p>Question 1</p><h2 class="stretch">Conserving and restoring natural resources</h2><p class="part-sub">Strategies for three resources every ecosystem needs: forests, soil and water.</p></div>
+  </section>
+
+  <section class="beat" id="forest" data-zone="forest" data-strand="res" data-title="Q1: Forests">
+    <article class="note right">
+      <span class="tag res">Question 1: Forests</span>
+      <h2>Replant the slopes</h2>
+      <p class="scrub">Roots hold soil in place, and leaves soften the rain. Take the trees away and the hillside washes into the river.</p>
+    </article>
+    <article class="note right">
+      <h3>Strategies</h3>
+      <ul>
+        <li><b>Plant a mix of native species.</b> Local wildlife depends on them, and a mixed forest copes better with disease.</li>
+        <li><b>Protect natural regrowth.</b> Fence out grazing animals so surviving seeds and stumps can regrow.</li>
+        <li><b>Harvest sustainably.</b> Take no more timber than the forest can replace.</li>
+      </ul>
+    </article>
+    <article class="note right evidence">
+      <p class="bignum"><span class="count" data-from="42" data-to="27">42</span>%</p>
+      <p><b>of China's Loess Plateau study area was eroded before restoration, and about 27% after.</b> Farmland on steep slopes was returned to vegetation from 1999. <a href="#sources">Zhao 2020</a></p>
+    </article>
+    <article class="note right">
+      <div class="predict" data-answer="1" data-why="Roots and leaf litter slow the water, so more of it soaks in. Less mud reaches the river, and the river stays fuller between storms.">
+        <p class="predict-q">Predict: after the slope is replanted, what happens to the river below?</p>
+        <div class="predict-a"><button>More mud after every storm</button><button>Less mud and a steadier flow</button><button>No change, because the slope is far away</button></div>
+        <p class="predict-why" role="status"></p>
+      </div>
+    </article>
+  </section>
+
+  <section class="beat" id="soil" data-strand="res" data-title="Q1: Soil">
+    <article class="note right">
+      <span class="tag res">Question 1: Soil</span>
+      <h2>Keep the soil on the land</h2>
+      <p class="scrub">Soil forms slowly, but one storm can strip it from bare ground. Keeping it covered and slowing the water protects it.</p>
+    </article>
+    <article class="note right">
+      <h3>Strategies</h3>
+      <ul>
+        <li><b>Contour ploughing:</b> furrows follow the shape of the slope and slow runoff. It can cut soil loss by up to 50% on moderate slopes. <a href="#sources">USDA</a></li>
+        <li><b>Terraces:</b> steps cut into steep slopes hold soil and water.</li>
+        <li><b>Less tillage and mulch:</b> roots and straw left in place protect the soil.</li>
+        <li><b>Coir or jute mats:</b> natural fibres hold steep ground while seedlings root, then rot away.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="beat" id="wetland" data-zone="wetland" data-strand="res" data-title="Q1: Water">
+    <article class="note left">
+      <span class="tag res">Question 1: Water</span>
+      <h2>Give the river room</h2>
+      <p class="scrub">Wetlands slow water down. Mud settles out, plants and microbes take up extra nutrients, and floods are soaked up.</p>
+    </article>
+    <article class="note left">
+      <h3>Strategies</h3>
+      <ul>
+        <li><b>Rebuild reed beds</b> where field drains meet the river. Bacteria on the roots turn nitrate into nitrogen gas.</li>
+        <li><b>Plant buffer strips</b> of trees and grasses along the banks to trap runoff and shade the water.</li>
+        <li><b>Use less water.</b> Drip irrigation and rain tanks leave more in the river during dry months.</li>
+      </ul>
+    </article>
+    <article class="note left evidence">
+      <div class="numpair">
+        <p class="bignum"><span class="count" data-to="37">0</span>%</p>
+        <p class="bignum"><span class="count" data-to="46">0</span>%</p>
+      </div>
+      <p><b>Median nitrogen and phosphorus removal</b> across 203 created or restored wetlands. Results vary from site to site. <a href="#sources">Land 2016</a></p>
+    </article>
+  </section>
+
+  <section class="scene scene-lake" id="lake" data-strand="res" data-title="Q1: Why wetlands matter">
+    <div class="scene-sticky">
+      <canvas aria-label="Cross-section of a lake showing how excess nutrients lead to fish deaths, and how a reed bed reverses it"></canvas>
+      <div class="scene-card">
+        <span class="tag res">Why restoring wetlands matters</span>
+        <h2>How fertiliser kills fish</h2>
+        <ol class="scene-steps">
+          <li><b>A healthy lake.</b> Light reaches the bottom. Water plants make oxygen, and fish breathe it.</li>
+          <li><b>Nutrients wash in, and algae bloom.</b> Spare nitrate and phosphate from fields and sewage feed algae, which cover the surface.</li>
+          <li><b>The light goes out.</b> Plants die in the shade. Bacteria feeding on the dead matter use up the dissolved oxygen.</li>
+          <li><b>Fish suffocate.</b> This is eutrophication. The fish die from lack of oxygen, even though the water isn't toxic.</li>
+          <li><b>Stop the source, and it recovers.</b> A reed bed and buffer strip catch the nutrients. Recovery can take years.</li>
+        </ol>
+        <ul class="lake-bars">
+          <li><span>Nutrients</span><i><u data-l="nut" class="b-nut"></u></i></li>
+          <li><span>Light</span><i><u data-l="light" class="b-light"></u></i></li>
+          <li><span>Oxygen</span><i><u data-l="oxy" class="b-oxy"></u></i></li>
+          <li><span>Fish</span><i><u data-l="fish" class="b-fish"></u></i></li>
+        </ul>
+      </div>
+      <div class="scene-time" aria-hidden="true"><i><u class="scene-fill"></u></i></div>
+    </div>
+  </section>
+
+  <!-- QUESTION 2 -->
+  <section class="part" data-strand="pol" id="part2" data-title="Question 2">
+    <div class="part-sticky"><p>Question 2</p><h2 class="stretch">Reducing pollution</h2><p class="part-sub">Strategies for air, water and land. Preventing pollution works better than cleaning it up later.</p></div>
+  </section>
+
+  <section class="beat" id="air" data-zone="air" data-strand="pol" data-title="Q2: Air">
+    <article class="note left">
+      <span class="tag pol">Question 2: Air pollution</span>
+      <h2>Clean the smoke, then replace the fuel</h2>
+      <p class="scrub">Burning coal releases sulphur dioxide, which forms acid rain. Acid rain damages leaves and strips nutrients from soil.</p>
+    </article>
+    <article class="note left">
+      <h3>Strategies</h3>
+      <ul>
+        <li><b>Fit scrubbers.</b> Wet limestone reacts with sulphur dioxide and traps it as gypsum before it leaves the stack.</li>
+        <li><b>Switch to solar and wind.</b> They make electricity with no smoke, and they cut carbon dioxide too.</li>
+        <li><b>Clean up transport.</b> Catalytic converters, electric vehicles, buses and cycling cut exhaust fumes.</li>
+      </ul>
+    </article>
+    <article class="note left evidence">
+      <p class="bignum"><span class="count" data-to="94">0</span>%</p>
+      <p><b>drop in sulphur dioxide from US power plants, 1990 to 2019,</b> under emission limits and pollution trading. <a href="#sources">US EPA</a></p>
+    </article>
+  </section>
+
+  <section class="beat" id="pipe" data-zone="pipe" data-strand="pol" data-title="Q2: Water">
+    <article class="note right">
+      <span class="tag pol">Question 2: Water pollution</span>
+      <h2>Treat it before it reaches the river</h2>
+      <p class="scrub">Watch the brown water clear as the treatment tanks come online. Clean water follows the current downstream.</p>
+    </article>
+    <article class="note right">
+      <h3>Strategies</h3>
+      <ul>
+        <li><b>Treat wastewater.</b> Solids settle out, bacteria digest organic waste, and a final stage removes leftover nutrients and metals.</li>
+        <li><b>Clean up past pollution.</b> Bioremediation uses bacteria to break down oil, and plants to draw metals from soil.</li>
+        <li><b>Keep it out of drains.</b> Never pour oil, paint or medicine down the sink.</li>
+      </ul>
+    </article>
+    <article class="note right evidence">
+      <p class="bignum"><span class="count" data-to="115">0</span>+</p>
+      <p><b>fish species recorded in the tidal Thames since 1957,</b> the year it was declared biologically dead. Sewage treatment made that return possible. <a href="#sources">ZSL</a></p>
+    </article>
+  </section>
+
+  <section class="beat" id="waste" data-zone="waste" data-strand="pol" data-title="Q2: Land">
+    <article class="note right">
+      <span class="tag pol">Question 2: Land pollution</span>
+      <h2>Shrink the dump</h2>
+      <p class="scrub">Burning rubbish fouls the air, and rain draining through it carries toxic liquid into the groundwater.</p>
+    </article>
+    <article class="note right">
+      <h3>Strategies, best first</h3>
+      <ol class="ladder">
+        <li><b>Refuse and reduce.</b> The best waste is waste never made.</li>
+        <li><b>Reuse and repair.</b> Keep things in use for longer.</li>
+        <li><b>Recycle.</b> Sort materials so they can be made into something new.</li>
+        <li><b>Compost.</b> Food and garden waste becomes fertiliser.</li>
+        <li><b>Seal old dumps.</b> Cap them with clay and soil, and plant on top.</li>
+      </ol>
+    </article>
+    <article class="note right evidence">
+      <p class="bignum"><span class="count" data-to="9">0</span>%</p>
+      <p><b>of the world's plastic waste is recycled.</b> That is why reducing comes first. <a href="#sources">OECD 2022</a></p>
+    </article>
+  </section>
+
+  <!-- QUESTION 3 -->
+  <section class="part" data-strand="pra" id="part3" data-title="Question 3">
+    <div class="part-sticky"><p>Question 3</p><h2 class="stretch">The effect of changing our practices</h2><p class="part-sub">Five changes. For each one: what changes, what improves, and what it costs.</p></div>
+  </section>
+
+  <section class="beat" id="farm" data-zone="farm" data-strand="pra" data-title="Q3: Natural materials">
+    <article class="note left">
+      <span class="tag pra">Question 3: Natural materials in agriculture</span>
+      <h2>Swap chemicals for natural materials</h2>
+      <p class="scrub">Natural materials can do the job of synthetic fertiliser and pesticide, and they build up the soil as they work.</p>
+    </article>
+    <article class="note left">
+      <h3>What changes</h3>
+      <ul>
+        <li><b>Compost and manure</b> replace synthetic fertiliser and feed the soil slowly.</li>
+        <li><b>Cover crops</b> protect bare soil over winter and hold on to nutrients.</li>
+        <li><b>Legumes</b> host bacteria that fix nitrogen from the air.</li>
+        <li><b>Push-pull planting:</b> Desmodium repels stemborer moths from maize, and Napier grass lures them away.</li>
+      </ul>
+    </article>
+    <article class="note left effect">
+      <h3>Effect of this change</h3>
+      <p class="bignum"><span class="count" data-to="70">0</span>%</p>
+      <p><b>less nitrate leached when a non-legume cover crop replaced bare winter soil,</b> with no significant change in yield. <a href="#sources">Tonitto 2006</a></p>
+      <dl class="effect-list">
+        <div class="good"><dt>What improves</dt><dd>Richer soil and cleaner rivers. Farmers using push-pull report maize yields about 20% higher. <a href="#sources">icipe</a></dd></div>
+        <div class="cost"><dt>What it costs</dt><dd>More labour. Overused manure still pollutes, and Napier grass can spread in wet areas.</dd></div>
+      </dl>
+    </article>
+  </section>
+
+  <section class="beat" id="organic" data-strand="pra" data-title="Q3: Organic agriculture">
+    <article class="note left">
+      <span class="tag pra">Question 3: Organic agriculture</span>
+      <h2>Farm with the ecosystem</h2>
+      <p class="scrub">One crop, year after year, drains the soil and feeds its pests. Organic farms use variety and natural predators instead.</p>
+    </article>
+    <article class="note left">
+      <h3>What changes</h3>
+      <ul>
+        <li><b>No synthetic fertiliser or pesticide.</b></li>
+        <li><b>Crop rotation</b> breaks pest cycles and restores nutrients.</li>
+        <li><b>Natural pest control:</b> hedges shelter ladybirds, which eat aphids. Spraying approved products is the last resort.</li>
+      </ul>
+    </article>
+    <article class="note left effect">
+      <h3>Effect of this change</h3>
+      <dl class="effect-list">
+        <div class="good"><dt>What improves</dt><dd><b>About 30% more species</b> on organic farms on average. <a href="#sources">Tuck 2014</a></dd></div>
+        <div class="cost"><dt>What it costs</dt><dd><b>Yields about 19% lower,</b> which can mean more land for the same food. Rotation and multi-cropping cut that gap to 8&ndash;9%. <a href="#sources">Ponisio 2015</a></dd></div>
+      </dl>
+    </article>
+  </section>
+
+  <section class="scene scene-bio" id="biomag" data-strand="pra" data-title="Q3: Why it matters">
+    <div class="scene-sticky">
+      <canvas aria-label="Animation of DDT becoming more concentrated at each step of a food chain, from water to a gull"></canvas>
+      <div class="scene-card">
+        <span class="tag pra">Effect of ending a pesticide</span>
+        <h2>How poison climbs a food chain</h2>
+        <ol class="scene-steps">
+          <li><b>A spray reaches the water.</b> DDT measured just 0.000003 parts per million in nearby water, and plankton took it in. It stays in their fat.</li>
+          <li><b>It concentrates at each step.</b> Each animal eats many others and keeps their DDT. This is biomagnification.</li>
+          <li><b>Top predators pay the price.</b> Fish-eating birds in one study carried up to 75 ppm. DDT thinned the eggshells of birds of prey.</li>
+          <li><b>Changing the practice worked.</b> After the US banned most uses in 1972, bald eagles rose from 417 nesting pairs in 1963 to 9,789 by 2007.</li>
+        </ol>
+        <dl class="scene-stats scene-stats-2">
+          <div><dt>DDT level</dt><dd data-b="ppm">0.000003 ppm</dd></div>
+          <div><dt>Measured in</dt><dd data-b="where">Water</dd></div>
+        </dl>
+      </div>
+      <div class="scene-time" aria-hidden="true"><i><u class="scene-fill"></u></i></div>
+      <p class="scene-caveat">Measured in a Long Island estuary. <a href="#sources">Woodwell 1967</a>, <a href="#sources">US FWS</a></p>
+    </div>
+  </section>
+
+  <section class="beat" id="corridor" data-zone="corridor" data-strand="pra" data-title="Q3: Conservation methods">
+    <article class="note right">
+      <span class="tag pra">Question 3: Conservation methods</span>
+      <h2>Protect what's left, then connect it</h2>
+      <p class="scrub">The ridge never lost its old forest. It still holds the seeds and animals needed to refill the valley, so it gets protected first.</p>
+    </article>
+    <article class="note right">
+      <h3>What changes</h3>
+      <ul>
+        <li><b>Protected areas</b> work best when local people help run them.</li>
+        <li><b>Wildlife corridors</b> like this green bridge let separated animals meet and breed, which restores gene flow.</li>
+        <li><b>Paying landowners</b> makes protecting nature worth more than clearing it.</li>
+        <li><b>Seed banks and captive breeding</b> keep a backup of species at risk.</li>
+      </ul>
+    </article>
+    <article class="note right">
+      <div class="predict" data-answer="2" data-why="A corridor reconnects populations. Animals can move between patches and breed, which restores gene flow. It doesn't add food by itself, and it doesn't stop every road death.">
+        <p class="predict-q">Predict: what is the main biological benefit of the green bridge?</p>
+        <div class="predict-a"><button>It gives deer more food</button><button>It keeps deer warmer in winter</button><button>It lets separated groups mix and share genes</button></div>
+        <p class="predict-why" role="status"></p>
+      </div>
+    </article>
+    <article class="note right effect">
+      <h3>Effect of this change</h3>
+      <dl class="effect-list">
+        <div class="good"><dt>What improves</dt><dd>Costa Rica went from about a quarter forest in the 1980s to over half today. <a href="#sources">IIED</a> A beaver trial in England found 37% more fish in dammed pools, and lower flood peaks. <a href="#sources">River Otter study</a></dd></div>
+        <div class="cost"><dt>What it costs</dt><dd>Land is taken out of use, payments need funding, and beaver dams can flood farmland.</dd></div>
+      </dl>
+    </article>
+  </section>
+
+  <section class="beat" id="school" data-zone="school" data-strand="pra" data-title="Q3: Education">
+    <article class="note right">
+      <span class="tag pra">Question 3: Education</span>
+      <h2>Teach it, or it won't last</h2>
+      <p class="scrub">Reed beds silt up and hedges get ripped out if nobody knows why they matter. A plan lasts when local people understand it.</p>
+    </article>
+    <article class="note right">
+      <h3>What changes</h3>
+      <ul>
+        <li><b>School gardens</b> teach composting and soil care with real results.</li>
+        <li><b>Farmer-to-farmer training:</b> people trust a method once it works on a neighbour's land.</li>
+        <li><b>Citizen science:</b> students survey birds and river insects, and their records become useful data.</li>
+      </ul>
+    </article>
+    <article class="note right effect">
+      <h3>Effect of this change</h3>
+      <dl class="effect-list">
+        <div class="good"><dt>What improves</dt><dd>People look after what they understand, so restoration lasts. Costa Rica's recovery is partly credited to its education system. <a href="#sources">IPS/FAO</a></dd></div>
+        <div class="cost"><dt>What it costs</dt><dd>Results are slow and hard to measure, and knowledge alone doesn't always change behaviour. Hands-on projects work better.</dd></div>
+      </dl>
+    </article>
+  </section>
+
+  <section class="beat" id="monitor" data-zone="monitor" data-strand="pra" data-title="Q3: Monitoring">
+    <article class="note left">
+      <span class="tag pra">Question 3: Monitoring strategies</span>
+      <h2>Measure it, or you're guessing</h2>
+      <p class="scrub">Monitoring shows whether a method is working in time to change it. If it isn't working, the plan changes.</p>
+    </article>
+    <article class="note left">
+      <h3>What changes</h3>
+      <ul>
+        <li><b>River sensors</b> measure oxygen and nitrate around the clock.</li>
+        <li><b>Drones and satellites</b> map how much forest has returned.</li>
+        <li><b>Camera traps</b> show which animals use the green bridge.</li>
+        <li><b>Bioindicators:</b> mayfly larvae are sensitive to pollution, so many of them suggest a healthy stream. <a href="#sources">Save the Sound</a></li>
+      </ul>
+    </article>
+    <article class="note left">
+      <div class="predict" data-answer="0" data-why="A spike right after rain points to runoff. Sampling upstream step by step finds where it comes from. Monitoring is only useful if it leads to action at the source.">
+        <p class="predict-q">Predict: the buoy shows nitrate spiking after every rainstorm. What should you do first?</p>
+        <div class="predict-a"><button>Sample upstream to trace the source</button><button>Add more fish to the river</button><button>Remove the buoy, as it must be faulty</button></div>
+        <p class="predict-why" role="status"></p>
+      </div>
+    </article>
+    <article class="note left effect">
+      <h3>Effect of this change</h3>
+      <dl class="effect-list">
+        <div class="good"><dt>What improves</dt><dd>Problems are caught early, and money goes to methods proven to work. This is called adaptive management.</dd></div>
+        <div class="cost"><dt>What it costs</dt><dd>Equipment and staff time. Data only helps if someone acts on it, and one indicator alone can mislead.</dd></div>
+      </dl>
+    </article>
+  </section>
+
+  <!-- FLYOVER -->
+  <section class="beat" id="flyover" data-zone="final" data-title="Fly the river">
+    <p class="fly-line">Year 29. Follow the water.</p>
+    <p class="fly-line">One valley. Many practical changes.</p>
+  </section>
+
+  <!-- COMPARE -->
+  <section class="beat" id="compare" data-title="Year 0 and year 30">
+    <div class="compare-sticky">
+      <div class="compare-labels"><span class="cl-a">Year 0</span><span class="cl-b">Year 30</span></div>
+      <button class="wipe-handle" id="wipeHandle" aria-label="Drag to compare year 0 and year 30. Use the left and right arrow keys while focused."><span></span></button>
+    </div>
+  </section>
+  <section class="opaque effects" id="effects" data-title="Q3: The effects compared">
+    <div class="wrap">
+      <h2 class="section-title reveal">The effect of each change in practice</h2>
+      <p class="lede reveal">Every change has benefits and a cost. Good conservation means choosing with both in mind.</p>
+      <div class="table-wrap">
+        <table class="effects-table">
+          <thead><tr><th scope="col">Change in practice</th><th scope="col">What improved</th><th scope="col">What it cost or risked</th></tr></thead>
+          <tbody>
+            <tr class="reveal"><th scope="row">Natural materials in agriculture</th><td>70% less nitrate leached with cover crops. Richer soil.</td><td>More labour. Overused manure still pollutes.</td></tr>
+            <tr class="reveal"><th scope="row">Organic agriculture</th><td>About 30% more species</td><td>Yields about 19% lower, or 8&ndash;9% with rotation</td></tr>
+            <tr class="reveal"><th scope="row">Conservation methods</th><td>Costa Rica's forest cover roughly doubled. Species can move and breed again.</td><td>Land out of use. Payments need funding.</td></tr>
+            <tr class="reveal"><th scope="row">Education</th><td>Local support, so restoration lasts</td><td>Slow and hard to measure</td></tr>
+            <tr class="reveal"><th scope="row">Monitoring strategies</th><td>Problems found early. Money goes to what works.</td><td>Equipment and time. Data must be acted on.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fineprint">The valley and its health bars are an illustrative model, not measurements. The percentages come from the real studies listed in the sources.</p>
+    </div>
+  </section>
+
+  <!-- SIMULATOR -->
+  <section class="opaque sim" id="simulator" data-title="Q3: Test the effect">
+    <div class="wrap">
+      <h2 class="section-title reveal">Test the effect of changing practice</h2>
+      <p class="lede">Choose natural materials and organic methods for this farm, then drag through ten years. Some effects are quick, some are slow, and some cost yield.</p>
+      <div class="sim-grid">
+        <div class="sim-controls">
+          <fieldset><legend>Practices on this farm</legend>
+            <label><input type="checkbox" data-p="cover"> Cover crops in winter</label>
+            <label><input type="checkbox" data-p="compost"> Compost instead of synthetic fertiliser</label>
+            <label><input type="checkbox" data-p="natural"> Natural pest control instead of pesticide</label>
+            <label><input type="checkbox" data-p="hedge"> Hedgerows and wildflower strips</label>
+            <label><input type="checkbox" data-p="rotate"> Crop rotation with legumes</label>
+          </fieldset>
+          <label class="year-slider"><span>Year <b id="simYearOut">0</b> of 10</span><input type="range" id="simYear" min="0" max="10" step="1" value="0"></label>
+          <button class="btn ghost" id="simAll" type="button">Turn on all practices and run ten years</button>
+        </div>
+        <div class="sim-view">
+          <svg id="simSvg" viewBox="0 0 640 300" role="img" aria-label="Cross-section of the field showing crops, roots, soil and runoff"></svg>
+          <ul class="sim-meters">
+            <li><span>Soil organic matter</span><i><u data-m="soil"></u></i><b data-v="soil"></b></li>
+            <li><span>Nitrate lost to the river</span><i><u data-m="nitrate"></u></i><b data-v="nitrate"></b></li>
+            <li><span>Species on the farm</span><i><u data-m="species"></u></i><b data-v="species"></b></li>
+            <li><span>Crop yield</span><i><u data-m="yield"></u></i><b data-v="yield"></b></li>
+          </ul>
+          <p class="sim-note" id="simNote" role="status"></p>
+        </div>
+      </div>
+      <p class="fineprint">A teaching model: 100 is today's conventional farm. The direction and rough size of each effect follow Tonitto 2006, Tuck 2014 and Ponisio 2015. The exact numbers are illustrative.</p>
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section class="opaque lab" id="lab" data-title="3D model lab">
+    <div class="wrap">
+      <h2 class="section-title reveal">3D model lab</h2>
+      <p class="lede">Soil and the reed bed show question 1, the scrubber shows question 2, and the river buoy shows monitoring from question 3. Drag to turn them, and tap a marker to learn about that part.</p>
+      <div class="lab-tabs" role="tablist" id="labTabs"></div>
+      <div class="lab-stage">
+        <div class="lab-canvas-wrap">
+          <canvas id="labCanvas" aria-label="Interactive 3D model"></canvas>
+          <div id="labPins"></div>
+          <div class="lab-extra" id="labExtra"></div>
+        </div>
+        <aside class="lab-info" aria-live="polite">
+          <h3 id="labTitle"></h3>
+          <p id="labLead"></p>
+          <div class="lab-detail" id="labDetail"></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANSWERS -->
+  <section class="opaque answers" id="answers" data-title="Our answers">
+    <div class="wrap">
+      <h2 class="section-title reveal">Our answers</h2>
+      <div class="answer-grid">
+        <div class="reveal">
+          <h3><span class="tag res">Question 1</span>Conserving and restoring natural resources</h3>
+          <ul>
+            <li><b>Forests:</b> replant native mixes and protect regrowth.</li>
+            <li><b>Soil:</b> contour ploughing, terraces, mulch and less tillage.</li>
+            <li><b>Water:</b> restore wetlands, plant buffer strips and use drip irrigation.</li>
+            <li><b>Energy and minerals:</b> use solar and wind, and recycle metals.</li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <h3><span class="tag pol">Question 2</span>Reducing pollution</h3>
+          <ul>
+            <li><b>Air:</b> scrubbers, clean energy and cleaner transport.</li>
+            <li><b>Water:</b> treat waste before it reaches rivers, and clean up past pollution.</li>
+            <li><b>Land:</b> reduce, reuse, recycle and compost, then seal old dumps.</li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <h3><span class="tag pra">Question 3</span>The effect of changing our practices</h3>
+          <ul>
+            <li><b>Natural materials:</b> cleaner rivers and richer soil, for more labour.</li>
+            <li><b>Organic agriculture:</b> more species, for lower yields.</li>
+            <li><b>Conservation methods:</b> habitats recover, but land is set aside.</li>
+            <li><b>Education:</b> restoration lasts, but slowly.</li>
+            <li><b>Monitoring:</b> problems are caught early, if people act on the data.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="opaque quiz" id="quiz" data-title="Class quiz">
+    <div class="wrap narrow" id="quizRoot"></div>
+  </section>
+
+  <!-- POSTERS -->
+  <section class="posters" id="posters" data-title="Posters">
+    <div class="posters-sticky">
+      <div class="posters-head">
+        <h2 class="section-title">Posters to take away</h2>
+        <p>Press Next to move through them. Open the page full size to save a poster as an image.</p>
+      </div>
+      <div class="posters-track" id="posterTrack"></div>
+    </div>
+  </section>
+
+  <!-- ACTIONS -->
+  <section class="opaque plan" id="plan" data-title="Your plan">
+    <div class="wrap">
+      <h2 class="section-title reveal">Practical methods you can use</h2>
+      <p class="lede">Choose what you could really do this term. Each choice plants a tree on the hill.</p>
+      <div class="plan-grid">
+        <div id="planLists"></div>
+        <div class="plan-hill">
+          <svg id="planSvg" viewBox="0 0 400 260" role="img" aria-label="A hillside that gains one tree for every action you choose"></svg>
+          <p id="planCount" role="status">No actions chosen yet</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOURCES -->
+  <section class="opaque sources" id="sources" data-title="Sources">
+    <div class="wrap">
+      <h2 class="section-title reveal">Sources</h2>
+      <ul class="source-list">
+        <li>Zhao, Y. et al. (2020). Quantifying the effects of vegetation restorations on soil erosion on the Loess Plateau. <cite>Frontiers in Plant Science.</cite> <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7728691/" target="_blank" rel="noopener">Read the study</a></li>
+        <li>IIED. Payments for ecosystem services: Costa Rica's recipe. <a href="https://www.iied.org/payments-for-ecosystem-services-costa-rica-s-recipe" target="_blank" rel="noopener">Read the article</a></li>
+        <li>IPS News (2016). Forests and crops grow hand by hand in Costa Rica. <a href="https://www.ipsnews.net/2016/07/forests-and-crops-grow-hand-by-hand-in-costa-rica/" target="_blank" rel="noopener">Read the article</a></li>
+        <li>Land, M. et al. (2016). How effective are created or restored freshwater wetlands for nitrogen and phosphorus removal? A systematic review. <cite>Environmental Evidence.</cite> <a href="https://environmentalevidence.org/project/how-effective-are-created-or-restored-freshwater-wetlands-for-nitrogen-and-phosphorus-removal-a-systematic-review/" target="_blank" rel="noopener">Read the review</a></li>
+        <li>US EPA (2020). 2019 power plant emissions data. <a href="https://19january2021snapshot.epa.gov/newsreleases/epas-2019-power-plant-emissions-data-demonstrate-significant-progress_.html" target="_blank" rel="noopener">Read the release</a></li>
+        <li>Zoological Society of London (ZSL). The State of the Thames, reported in: Nature recovery for Thames. <a href="https://countryside-jobs.com/article/2021-11-10-nature-recovery-for-thames-but-river-at-high-risk-from-sewage-and-climate-change-report-finds" target="_blank" rel="noopener">Read the summary</a></li>
+        <li>OECD (2022). Global Plastics Outlook, reported in: 9% of global plastic waste is recycled. <a href="https://www.circularonline.co.uk/news/9-of-global-plastic-waste-is-recycled-while-22-is-mismanaged-oecd/" target="_blank" rel="noopener">Read the summary</a></li>
+        <li>Tonitto, C., David, M. &amp; Drinkwater, L. (2006). Replacing bare fallows with cover crops. <cite>Agriculture, Ecosystems &amp; Environment.</cite> <a href="https://ars.usda.gov/ARSUserFiles/21904/Others%20PDFs/Agric%20Ecosyst%20Env%20112p58.pdf" target="_blank" rel="noopener">Read the study</a></li>
+        <li>Tuck, S. et al. (2014). Land-use intensity and the effects of organic farming on biodiversity. <cite>Journal of Applied Ecology.</cite> <a href="https://research.slu.se/en/publications/land-use-intensity-and-the-effects-of-organic-farming-on-biodiver/" target="_blank" rel="noopener">Read the study</a></li>
+        <li>Ponisio, L. et al. (2015). Diversification practices reduce organic to conventional yield gap. <cite>Proceedings of the Royal Society B.</cite> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4286047" target="_blank" rel="noopener">Read the study</a></li>
+        <li>US Fish and Wildlife Service (2007). Bald eagle numbers soaring. <a href="https://www.fws.gov/story/2007-05/bald-eagle-numbers-soaring-0" target="_blank" rel="noopener">Read the article</a></li>
+        <li>Woodwell, G., Wurster, C. &amp; Isaacson, P. (1967). DDT residues in an East Coast estuary. <cite>Science.</cite> <a href="https://scilit.com/publications/c9f74feefc5007da41f8ca250b8ff910" target="_blank" rel="noopener">Read the record</a></li>
+        <li>River Otter Beaver Trial, reported in: Beavers cut flood risks, clean rivers and boost wildlife. <a href="https://ca.news.yahoo.com/beavers-cut-flood-risks-clean-121651192.html" target="_blank" rel="noopener">Read the article</a></li>
+        <li>USDA NRCS. Contour farming: conservation practice guidance. <a href="https://efotg.sc.egov.usda.gov/references/Delete/2011-1-1/ContourFarming.pdf" target="_blank" rel="noopener">Read the guidance</a></li>
+        <li>Coastlines on the Earth model: Natural Earth (public domain), through the world-atlas data package. <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Visit Natural Earth</a></li>
+        <li>icipe. Push-pull: controlling stemborers. <a href="https://www.push-pull.net/control_stemborers.pdf" target="_blank" rel="noopener">Read the guide</a></li>
+        <li>Save the Sound (2025). How mayflies, stoneflies and caddisflies reveal the health of our rivers. <a href="https://www.savethesound.org/2025/06/30/stream-bugs-that-speak-for-the-water-how-mayflies-stoneflies-and-caddisflies-reveal-the-health-of-our-rivers/" target="_blank" rel="noopener">Read the article</a></li>
+      </ul>
+      <div class="credits">
+        <p>Presented by <span id="groupNames" class="editable" contenteditable="true" role="textbox" aria-label="Group member names, click to edit" spellcheck="false" data-placeholder="click here and type your group's names"></span></p>
+        <p class="fineprint">Press H for the presenter keys. Right arrow or Next moves on a slide, P starts auto-play, N shows speaker notes, M turns on sound.</p>
+        <button class="btn" id="backTop" type="button">Back to year 0</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<noscript><p style="padding:2rem">This presentation needs JavaScript for its 3D model and quizzes.</p></noscript>
+<script>/*__JS__*/</script>
+</body>
+</html>
